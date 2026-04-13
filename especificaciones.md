@@ -1,12 +1,10 @@
 
-## Nombre del proyecto
-
-Gestor de Librería Personal
+## PROYECTO: Gestor de Librería Personal
 ---
 
 ## Descripción
 
-*(Dos o tres frases explicando qué hace la aplicación y para quién es útil)*
+Esta aplicación permite a los usuarios organizar su colección de libros, permitiendo así diferenciar entre la información de la obra y la experiencia personal del lector. Es una herramienta ideal para bibliófilos que deseen llevar un registro detallado de sus lecturas, puntuaciones y estadísticas de progreso, integrando datos globales mediante una API externa.
 
 ---
 
@@ -15,8 +13,8 @@ Gestor de Librería Personal
 | Campo | Detalle |
 |---|---|
 | Nombre | OpenLibrary |
-| URL base | https://openlibrary.org/developers |
-| Documentación | |
+| URL base | https://openlibrary.org |
+| Documentación | [OpenLibrary Search API](https://openlibrary.org/dev/docs/api/search) |
 | Autenticación requerida | No |
 | Formato de respuesta | JSON |
 
@@ -26,7 +24,10 @@ Gestor de Librería Personal
 
 | Endpoint | Descripción | Ejemplo de llamada |
 |---|---|---|
-| `/ruta/del/endpoint` | Qué devuelve | `https://...` |
+| `/search.json?q=` | Búsqueda general por título, autor o ISBN | `https://openlibrary.org/search.json?q=the+hobbit` |
+| `/search.json?isbn=` | Búsqueda específica por código de barras (ISBN) | `https://openlibrary.org/search.json?isbn=9780261102217` |
+| `/authors/{key}.json` | Obtener detalles específicos de un autor | `https://openlibrary.org/authors/OL23919A.json` |
+
 
 ---
 
@@ -34,12 +35,12 @@ Gestor de Librería Personal
 
 Lista las cosas que hará tu aplicación. Empieza por lo más simple.
 
-- [ ] Buscar libro: por título o por ISBN
-- [ ] Ver la biblioteca entera
-- [ ] Filtrar por estado (leído / leyendo / pendiente)
-- [ ] Ver favoritos
-- [ ] Editar estado, puntuación o reseña
-- [ ] Ver estadísticas de lectura
+- [ ] **Buscar libro:** consulta por título o ISBN.
+- [ ] **Gestión de Biblioteca:** Añadir libros encontrados a la biblioteca personal.
+- [ ] **Seguimiento de Lectura:** Cambiar estado (Pendiente/Leyendo/Leído).
+- [ ] **Personalización:** Añadir notas, reseñas y puntuación (0-5 estrellas).
+- [ ] **Favoritos:** Marcar libros destacados para acceso rápido.
+- [ ] **Estadísticas:** Visualizar total de páginas leídas, autor favorito y géneros más frecuentes.
 
 ---
 
@@ -47,13 +48,13 @@ Lista las cosas que hará tu aplicación. Empieza por lo más simple.
 
 | Clase | Responsabilidad |
 |---|---|
-| `Libro` | Representa un libro con todos sus datos 
-| `EstadoLectura` | Representa el estado de lectura de un libro en la biblioteca |
-| `EntradaBiblioteca` | Representa un libro dentro de la biblioteca personal del usuario, con su estado de lectura, puntuación y reseña |
-| `Biblioteca` | Gestiona la colección de libros del usuario | 
+| `Libro` | Objeto que contiene la información técnica y pública del libro |
+| `EstadoLectura` | Enum que restringe los estados posibles: PENDIENTE, LEYENDO, LEIDO |
+| `EntradaBiblioteca` | Clase que vincula un Libro con datos privados del usuario (reseña, nota) |
+| `Biblioteca` | Contenedor principal que gestiona la lista de entradas y realiza filtros/búsquedas locales | 
 | `OpenLibraryClient` | Clase responsable de hacer las llamadas API |
 | `Estadísticas` | Calcula y muestra estadísticas de lectura sobre la biblioteca |
-| `GestorLibreria` | Clase principal. Gestiona el menú |
+| `GestorLibreria` | Controlador que gestiona la interfaz de usuario y el flujo de la aplicación |
 
 ---
 
@@ -64,15 +65,15 @@ classDiagram
     EntradaBiblioteca --> Libro : referencia
     EntradaBiblioteca --> EstadoLectura : usa
 
-    Biblioteca *--> EntradaBiblioteca : contiene
+    Biblioteca *-- EntradaBiblioteca : posee
 
     Estadisticas ..> Biblioteca : consulta
 
     OpenLibraryClient ..> Libro : crea
 
-    GestorLibreria *--> Biblioteca : posee
-    GestorLibreria *--> Estadisticas : posee
-    GestorLibreria *..> OpenLibraryClient : posee
+    GestorLibreria *-- Biblioteca : inicializa
+    GestorLibreria *-- OpenLibraryClient : inicializa
+    GestorLibreria ..> Estadisticas : invoca
 
     class Libro {
         - String titulo
@@ -138,11 +139,20 @@ classDiagram
 
 ## Ejemplo de respuesta JSON de la API
 
-*(Pega aquí un fragmento real de la respuesta de la API para el endpoint principal)*
-
 ```json
 {
-  "ejemplo": "pega aquí la respuesta real"
+    "numFound" : 1,
+    "docs" : [
+    {
+        "title" : "The Hobbit",
+        "author_name" : ["J.R.R. Tolkien"],
+        "first_publish_year" : 1937,
+        "isbn" : ["9780261102217"],
+        "number_of_pages_median" : 310,
+        "publisher" : ["HarperCollins"],
+        "language" : ["eng"]
+    }
+  ]
 }
 ```
 
@@ -150,6 +160,3 @@ classDiagram
 
 ## Dudas o decisiones pendientes
 
-Security
-Status
-Comm
