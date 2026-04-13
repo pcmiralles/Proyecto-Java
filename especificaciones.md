@@ -34,10 +34,12 @@ Gestor de Librería Personal
 
 Lista las cosas que hará tu aplicación. Empieza por lo más simple.
 
-- [ ] Funcionalidad 1
-- [ ] Funcionalidad 2
-- [ ] Funcionalidad 3
-- [ ] *(Opcional/avanzado)* Funcionalidad 4
+- [ ] Buscar libro: por título o por ISBN
+- [ ] Ver la biblioteca entera
+- [ ] Filtrar por estado (leído / leyendo / pendiente)
+- [ ] Ver favoritos
+- [ ] Editar estado, puntuación o reseña
+- [ ] Ver estadísticas de lectura
 
 ---
 
@@ -59,8 +61,18 @@ Lista las cosas que hará tu aplicación. Empieza por lo más simple.
 
 ```mermaid
 classDiagram
-    Vehiculo <|-- Coche
-    Vehiculo <|-- Moto
+    EntradaBiblioteca --> Libro : referencia
+    EntradaBiblioteca --> EstadoLectura : usa
+
+    Biblioteca *--> EntradaBiblioteca : contiene
+
+    Estadísticas ..> Biblioteca : consulta
+
+    OpenLibraryClient ..> Libro : crea
+
+    GestorLibreria *--> Biblioteca : posee
+    GestorLibreria *--> Estadisticas : posee
+    GestorLibreria *..> OpenLibraryClient : posee
 
     class Libro {
         - String titulo
@@ -105,7 +117,20 @@ classDiagram
 
     class Estadisticas {
         - Biblioteca biblioteca
-        + int totalLEID
+        + int totalLeidos()
+        + String autorMasLeido()
+        + String generoMasLeido()
+        + int paginasTotales()
+        + Libro mejorValorado()
+        + void mostrarResumen()
+    }
+
+    class GestorLibreria {
+        - Biblioteca biblioteca
+        - OpenLibraryClient cliente
+        - Estadisticas estadisticas
+        + run()
+        + menuPrincipal()
     }
 ```
 
@@ -124,11 +149,7 @@ classDiagram
 ---
 
 ## Dudas o decisiones pendientes
-Footer
-© 2026 GitHub, Inc.
-Footer navigation
-Terms
-Privacy
+
 Security
 Status
 Comm
