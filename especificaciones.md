@@ -14,10 +14,10 @@ Gestor de Librería Personal
 
 | Campo | Detalle |
 |---|---|
-| Nombre | |
-| URL base | |
+| Nombre | OpenLibrary |
+| URL base | https://openlibrary.org/developers |
 | Documentación | |
-| Autenticación requerida | Sí / No |
+| Autenticación requerida | No |
 | Formato de respuesta | JSON |
 
 ---
@@ -45,13 +45,69 @@ Lista las cosas que hará tu aplicación. Empieza por lo más simple.
 
 | Clase | Responsabilidad |
 |---|---|
-| `NombreClase` | Qué representa o hace |
+| `Libro` | Representa un libro con todos sus datos 
+| `EstadoLectura` | Representa el estado de lectura de un libro en la biblioteca |
+| `EntradaBiblioteca` | Representa un libro dentro de la biblioteca personal del usuario, con su estado de lectura, puntuación y reseña |
+| `Biblioteca` | Gestiona la colección de libros del usuario | 
+| `OpenLibraryClient` | Clase responsable de hacer las llamadas API |
+| `Estadísticas` | Calcula y muestra estadísticas de lectura sobre la biblioteca |
+| `GestorLibreria` | Clase principal. Gestiona el menú |
 
 ---
 
 ## Diagrama de clases UML
 
-*(Inserta aquí la imagen o el diagrama en texto)*
+```mermaid
+classDiagram
+    Vehiculo <|-- Coche
+    Vehiculo <|-- Moto
+
+    class Libro {
+        - String titulo
+        - String autor
+        - int añoPublicacion
+        - String editorial
+        - String genero
+        - int numPaginas
+        - String url/doi
+        - String sinopsis
+        - String isbn
+        + string getFicha()
+    }
+    class EstadoLectura {
+        Pendiente
+        Leyendo
+        Leido
+    }
+    class EntradaBiblioteca {
+        - Libro libro
+        - EstadoLectura estado
+        - int (0-5) puntuacion
+        - String reseña
+        - boolean favorito
+        + String getResumen()
+    }
+    class Biblioteca {
+        - List<EntradaBiblioteca> entradas
+        + añadir()
+        + buscarPorTitulo()
+        + filtrarPorEstado()
+        + getFavoritos()
+        + eliminar()
+        + contiene()
+    }
+
+    class OpenLibraryClient {
+        - String URL_BASE
+        + buscarPorTitulo()
+        + buscarPorISBN()
+    }
+
+    class Estadisticas {
+        - Biblioteca biblioteca
+        + int totalLEID
+    }
+```
 
 ---
 
