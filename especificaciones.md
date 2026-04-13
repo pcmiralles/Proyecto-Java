@@ -66,7 +66,7 @@ classDiagram
 
     Biblioteca *--> EntradaBiblioteca : contiene
 
-    Estadísticas ..> Biblioteca : consulta
+    Estadisticas ..> Biblioteca : consulta
 
     OpenLibraryClient ..> Libro : crea
 
